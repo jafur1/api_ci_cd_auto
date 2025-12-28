@@ -3,29 +3,27 @@ import pytest
 from utils.api_client import ApiClient, get_api_client
 
 @pytest.fixture
-def api_client() -> ApiClient:
-    return get_api_client(
-        base_url=os.environ.get("CI_API_URL", "https://restful-booker.herokuapp.com"),
-        default_headers={'Authorization': 'Bearer test-token'},
-        verify_ssl=False,
-        timeout=10
-    )
+def base_url() -> str:
+    return os.environ.get("CI_API_URL", "https://restful-booker.herokuapp.com")
 
 @pytest.fixture
-def unauthenticated_api_client() -> ApiClient:
-    # клиент без токена
+def client(base_url) -> ApiClient: # клиент без токена в хедере
     return get_api_client(
-        base_url=os.environ.get("CI_API_URL"),
+        base_url=base_url,
         verify_ssl=False,
         timeout=10
     )
 
 @pytest.fixture
 def test_user_data() -> dict:
-    #данные пользователя для токена
     return {
-        "email": "test@example.com",
-        "password": "TestPass123!"
+        "username": os.environ.get("TEST_USERNAME", "admin"),
+        "password": os.environ.get("TEST_PASSWORD", "password123")
     }
+
+@pytest.fixture
+def api_client(client, auth_token) -> ApiClient: # клиент с токеном в хедер
+    client.set_auth_token(auth_token)
+    return client
 
 

@@ -1,5 +1,5 @@
 # .gitignore
-
+README_USAGE.md
 # Питон
 *.pyc
 __pycache__/
@@ -37,9 +37,7 @@ htmlcov/
 test_reports/
 *.xml
 *.json
-.pytest_cache/
-.coverage
-htmlcov/
+reports/
 
 # Документация
 docs/_build/

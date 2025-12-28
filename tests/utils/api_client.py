@@ -41,7 +41,7 @@ class ApiResponse:
 
     def assert_status_code(self, expected_code: int):
         assert self.status_code == expected_code,\
-            f"Ожидалося статус код {expected_code}, был получент {self.status_code}"
+            f"Ожидался статус код {expected_code}, был получен {self.status_code}"
 
 class ApiClient:
     def __init__(self, base_url: str, default_headers: Optional[Dict[str, str]] = None, timeout: int = 30):
@@ -115,7 +115,7 @@ def get_api_client(base_url: Optional[str] = None,
     client = ApiClient(base_url, default_headers)
     if auth is not None:
         client.session.auth = auth
-    if timeout is None:
-        client.session.timeout = timeout
+    if timeout is not None:
+        client.timeout = timeout
     client.session.verify = verify_ssl
     return client
