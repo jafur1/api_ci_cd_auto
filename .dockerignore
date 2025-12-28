@@ -1,0 +1,49 @@
+# .dockerignore
+.git
+.gitignore
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE файлы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.temp
+
+# Тестовые отчеты и кэш
+.coverage
+.pytest_cache/
+htmlcov/
+.coverage.*
+.mypy_cache/
+
+# Документация
+docs/_build/
+
+# Дистрибутивы и сборки
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Конфигурационные файлы
+docker-compose.override.yml
+*.env.local
+*.env.development.local
+*.env.test.local

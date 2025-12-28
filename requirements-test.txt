@@ -1,0 +1,14 @@
+# Тестирование
+pytest==7.4.3
+pytest-html==4.0.2
+pytest-timeout==2.2.0
+pytest-rerunfailures==12.0
+pytest-ordering==0.6
+
+# Allure
+allure-pytest==2.13.2
+allure-python-commons==2.13.2
+
+# Дополнительно
+Faker==20.1.0  # Генерация тестовых данных
+jsonschema==4.20.0  # Валидация JSON схем

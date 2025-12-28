@@ -1,0 +1,1 @@
+Пока что заготовка для api фулл ci/cd сборки с использованием Pytest Allure Requests Docker
