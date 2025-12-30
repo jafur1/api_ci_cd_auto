@@ -16,17 +16,20 @@ class HTTPMethod(Enum):
 class ApiResponse:
     status_code: int
     headers: dict[str, str]
-    body: Union[Dict[str, Any], str, bytes]
+    body: Union[Dict[str, Any], str, bytes, list]  # ← Добавьте list
     elapsed: float
     request_url: str
     request_method: str
 
     @property
-    def json(self) -> dict:
-        if isinstance(self.body, dict):
+    def json(self) -> Union[dict, list]:  # ← Измените возвращаемый тип
+        if isinstance(self.body, (dict, list)):
             return self.body
         try:
-            return json.loads(self.body) if self.body else {}
+            if self.body:
+                return json.loads(self.body)
+            else:
+                return {}
         except (json.JSONDecodeError, TypeError):
             return {}
 

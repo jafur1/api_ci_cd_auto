@@ -1,10 +1,20 @@
 import os
 import pytest
+import requests
+
 from utils.api_client import ApiClient, get_api_client
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def base_url() -> str:
     return os.environ.get("CI_API_URL", "https://restful-booker.herokuapp.com")
+
+@pytest.fixture
+def auth_token(test_user_data,base_url):
+    response = requests.post(
+        f"{base_url}/auth",
+        json=test_user_data
+    )
+    return response.json()["token"]
 
 @pytest.fixture
 def client(base_url) -> ApiClient: # клиент без токена в хедере
