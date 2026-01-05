@@ -10,6 +10,10 @@ class Booking(BaseModel):
     bookingdates: Dict[str, str]
     additionalneeds: str
 
+class BookingAnswer(BaseModel):
+    bookingid: int
+    booking: Booking
+
 class BookingIds(BaseModel):
     bookingid: int
 

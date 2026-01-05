@@ -4,5 +4,4 @@ class Endpoints:
 
     #Booking
     BOOKING = '/booking'
-    BOOKING_ID = '/booking/{id}'
 
