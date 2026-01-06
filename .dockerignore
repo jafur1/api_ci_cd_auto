@@ -1,17 +1,29 @@
 # .dockerignore
+
+# Git
 .git
 .gitignore
+.gitattributes
+.github/
+
+# Python
 *.pyc
 __pycache__/
 *.pyo
 *.pyd
 .Python
+*.so
+*.py[cod]
+*$py.class
+
+# Виртуальные окружения
 env/
 venv/
 .venv/
 ENV/
 env.bak/
 venv.bak/
+ENV.bak/
 
 # IDE файлы
 .vscode/
@@ -20,11 +32,17 @@ venv.bak/
 *.swo
 *~
 .DS_Store
+*.sublime-project
+*.sublime-workspace
 
 # Логи и временные файлы
 *.log
+*.pid
+logs/
+*.log.*
 *.tmp
 *.temp
+*.bak
 
 # Тестовые отчеты и кэш
 .coverage
@@ -32,18 +50,49 @@ venv.bak/
 htmlcov/
 .coverage.*
 .mypy_cache/
+test_reports/
+allure-results/
+allure-report/
+.hypothesis/
+.tox/
 
 # Документация
 docs/_build/
+docs/_static/
+docs/_templates/
+README.md
+README*.md
 
 # Дистрибутивы и сборки
 dist/
 build/
 *.egg-info/
 *.egg
+*.whl
 
 # Конфигурационные файлы
 docker-compose.override.yml
 *.env.local
 *.env.development.local
 *.env.test.local
+test.env
+.env
+.env.*
+
+# Отчеты (будут созданы в контейнере)
+reports/
+*.html
+*.xml
+
+# Тестовые данные (опционально, если не нужны в контейнере)
+# test_data/
+
+# OS
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes

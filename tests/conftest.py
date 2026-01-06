@@ -25,7 +25,6 @@ def auth_token(test_user_data,base_url):
 def client(base_url) -> ApiClient: # клиент без токена в хедере
     return get_api_client(
         base_url=base_url,
-        verify_ssl=False,
         timeout=10
     )
 

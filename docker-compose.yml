@@ -1,0 +1,20 @@
+services:
+  api-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-autotests
+    working_dir: /app
+    environment:
+      - API_URL=https://restful-booker.herokuapp.com
+      - ENVIRONMENT=staging
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    volumes:
+      - ./reports:/app/reports
+      - ./test_data:/app/test_data
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+    command: pytest tests/ -v --html=reports/report.html
