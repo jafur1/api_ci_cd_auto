@@ -27,7 +27,7 @@ class TestBooking:
     @pytest.mark.smoke()
     @pytest.mark.api()
     def test_create_and_delete_booking(self, api_client, item_data, delete_item):
-        with allure.step(''):
+        with allure.step('Отправить POST запрос для создания нового бронирования'):
             response = api_client.post(endpoint=f"{Endpoints.BOOKING}", json=item_data)
         with allure.step("Проверить статус код ответа"):
             Assert.status_code(response, 200)

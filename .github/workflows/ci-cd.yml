@@ -1,0 +1,130 @@
+name: CI/CD Пайплайн
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  тестирование:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Получение кода
+      uses: actions/checkout@v4
+      
+    - name: Установка Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        
+    - name: Установка зависимостей
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-test.txt
+        
+    - name: Настройка переменных окружения
+      run: |
+        echo "API_URL=https://restful-booker.herokuapp.com" >> $GITHUB_ENV
+        echo "CI_API_URL=https://restful-booker.herokuapp.com" >> $GITHUB_ENV
+        echo "TEST_USERNAME=admin" >> $GITHUB_ENV
+        echo "TEST_PASSWORD=password123" >> $GITHUB_ENV
+        echo "ENVIRONMENT=test" >> $GITHUB_ENV
+        echo "LOG_LEVEL=INFO" >> $GITHUB_ENV
+        echo "PYTHONUNBUFFERED=1" >> $GITHUB_ENV
+        echo "PYTHONDONTWRITEBYTECODE=1" >> $GITHUB_ENV
+        echo "REQUEST_TIMEOUT=30" >> $GITHUB_ENV
+        echo "ALLURE_RESULTS_DIR=allure-results" >> $GITHUB_ENV
+        echo "ALLURE_REPORT_DIR=allure-report" >> $GITHUB_ENV
+        
+    - name: Создание директории для отчетов
+      run: mkdir -p reports allure-results allure-report allure-history
+      
+    - name: Запуск тестов с HTML отчетом
+      continue-on-error: true
+      run: |
+        pytest tests/ -v \
+          --html=reports/report.html \
+          --self-contained-html \
+          --alluredir=allure-results \
+          --junitxml=reports/junit.xml
+        
+    - name: Генерация Allure отчета
+      if: always()
+      uses: simple-elf/allure-report-action@master
+      with:
+        allure_results: allure-results
+        allure_history: allure-history
+        keep_reports: 20
+        allure_report_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        
+    - name: Проверка наличия результатов Allure
+      if: always()
+      run: |
+        if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
+          echo "Allure результаты найдены"
+          ls -la allure-results/
+        else
+          echo "Предупреждение: Директория allure-results пуста или не найдена"
+        fi
+        
+    - name: Загрузка HTML отчета
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: html-report
+        path: reports/report.html
+        retention-days: 30
+        
+    - name: Загрузка результатов Allure
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results
+        path: allure-results
+        retention-days: 30
+        if-no-files-found: warn
+        
+    - name: Загрузка сгенерированного Allure отчета
+      if: always()
+      uses: actions/upload-artifact@v4
+      continue-on-error: true
+      with:
+        name: allure-report
+        path: allure-report
+        retention-days: 30
+        if-no-files-found: ignore
+        
+    - name: Загрузка JUnit XML
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: junit-xml
+        path: reports/junit.xml
+        retention-days: 30
+        
+    - name: Сводка по тестам
+      if: always()
+      run: |
+        echo "## Результаты тестирования" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Доступные отчеты:" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 HTML отчет: Доступен в артефактах (html-report)" >> $GITHUB_STEP_SUMMARY
+        echo "- 🎯 Allure результаты: Доступны в артефактах (allure-results)" >> $GITHUB_STEP_SUMMARY
+        if [ -d "allure-report" ] && [ "$(ls -A allure-report)" ]; then
+          echo "- 📈 Сгенерированный Allure отчет: Доступен в артефактах (allure-report)" >> $GITHUB_STEP_SUMMARY
+        fi
+        if [ -f reports/junit.xml ]; then
+          echo "- ✅ JUnit XML: Доступен в артефактах (junit-xml)" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Информация о запуске:" >> $GITHUB_STEP_SUMMARY
+        echo "- Workflow: ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Run ID: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+
